@@ -43,7 +43,7 @@ def extract_dates(file_path):
         with open(file_path, mode="r", encoding="utf-8") as infile:
             reader = csv.DictReader(infile, delimiter=",")
             for row in reader:
-                sales_date = row.get("Verkaufsdatum", "")
+                sales_date = row.get("Sale Date", "")
                 if sales_date:
                     dates.add(sales_date)
     except Exception as e:
@@ -86,10 +86,10 @@ def convert_csv():
 
                 has_data = False
                 for row in reader:
-                    if row.get("Verkaufsdatum", "") != selected_date:
+                    if row.get("Sale Date", "") != selected_date:
                         continue
                     
-                    street, house_number = extract_street_and_number(row.get("Strasse 1", ""), row.get("Strasse 2", ""))
+                    street, house_number = extract_street_and_number(row.get("Street 1", ""), row.get("Street 2", ""))
                     
                     writer.writerow({
                         "Sendungsreferenz":"",
@@ -106,14 +106,14 @@ def convert_csv():
                         "Absenderreferenz": "",
                         "Absender E-Mail-Adresse": "hello@verdruckt.com",
                         "Absender Telefonnummer": "",
-                        "Empfänger Name 1": row.get("Name", ""),
+                        "Empfänger Name 1": row.get("Full Name", ""),
                         "Empfänger Name 2 / Postnummer": "",
                         "Empfänger Name 3": "",
                         "Empfänger Straße": street,
                         "Empfänger Hausnummer": house_number,
-                        "Empfänger PLZ": row.get("Versand-Postleitzahl", ""),
-                        "Empfänger Ort": row.get("Stadt des Versands", ""),
-                        "Empfänger Provinz": row.get("Bundesland des Versands", ""),
+                        "Empfänger PLZ": row.get("Ship Zipcode", ""),
+                        "Empfänger Ort": row.get("Ship City", ""),
+                        "Empfänger Provinz": row.get("Ship State", ""),
                         "Empfänger Land": "DEU",
                         "Empfängerreferenz": "",
                         "Empfänger E-Mail-Adresse": "",
