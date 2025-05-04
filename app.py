@@ -34,7 +34,7 @@ def start_app():
     convert_button.pack(pady=20, fill="x")
 
     # Copyright Label
-    copyright_label = ctk.CTkLabel(root, text="© 2024 HaiX", font=("Arial", 10))
+    copyright_label = ctk.CTkLabel(root, text="© 2024 HaiX belyat", font=("Arial", 10))
     copyright_label.pack(pady=5)
 
     root.mainloop()
