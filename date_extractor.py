@@ -19,5 +19,6 @@ def extract_dates(file_path):
         return []
     
     sorted_dates = sorted(dates, key=lambda x: datetime.datetime.strptime(x, "%m/%d/%y"))
-    formatted_dates = [f"{date} (Heute)" if date == today else f"{date} (Gestern)" if date == yesterday else date for date in sorted_dates]
+    #formatted_dates = [f"{date} (Heute)" if date == today else f"{date} (Gestern)" if date == yesterday else date for date in sorted_dates]
+    formatted_dates = [date for date in sorted_dates]
     return formatted_dates
