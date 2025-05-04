@@ -33,7 +33,3 @@ def check_for_updates():
         print("Unexpected response structure from GitHub API.")
     except Exception as e:
         print(f"An error occurred: {e}")
-
-# Run the update check when the program starts
-if __name__ == "__main__":
-    check_for_updates()
