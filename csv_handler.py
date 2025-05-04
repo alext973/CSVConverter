@@ -1,11 +1,22 @@
+import unicodedata
 import csv
 from tkinter import filedialog, messagebox
+import customtkinter as ctk
 from date_extractor import extract_dates
 from address_parser import extract_street_and_number
 
 input_file = ""  # Globale Variable für den Dateipfad
+selected_dates = []  # Globale Liste für die ausgewählten Daten
 
-def load_csv(date_dropdown, convert_button):
+def replace_invalid_characters(text):
+    """
+    Ersetzt nicht darstellbare Zeichen in einem Text durch ein '?'.
+    """
+    if not text:
+        return ""
+    return text.encode("ISO-8859-1", errors="replace").decode("ISO-8859-1")
+
+def load_csv(date_frame, convert_button):
     global input_file
     file_path = filedialog.askopenfilename(
         title="CSV-Datei auswählen", 
@@ -13,20 +24,49 @@ def load_csv(date_dropdown, convert_button):
     )
     if file_path and file_path.endswith(".csv"):
         input_file = file_path
-        date_dropdown.set("Bitte Datum auswählen")
-        date_dropdown.configure(values=extract_dates(file_path))
+        dates = extract_dates(file_path)  # Extrahiere Daten aus der CSV-Datei
+
+        # Entferne alte Checkboxen
+        for widget in date_frame.winfo_children():
+            widget.destroy()
+
+        # Füge neue Checkboxen hinzu
+        for date in dates:
+            var = ctk.StringVar(value="off")
+            checkbox = ctk.CTkCheckBox(date_frame, text=date, variable=var, onvalue=date, offvalue="off")
+            checkbox.pack(anchor="w", pady=2)
+
+        # Aktiviere den Konvertieren-Button
         convert_button.configure(state="normal")
     else:
         messagebox.showerror("Fehler", "Bitte eine gültige CSV-Datei auswählen.")
 
-def convert_csv(date_dropdown):
-    global input_file
+def save_selected_dates(date_frame):
+    """
+    Speichert die ausgewählten Daten aus den Checkboxen in der globalen Liste `selected_dates`.
+    """
+    global selected_dates
+    selected_dates = []  # Zurücksetzen der Liste
+    for widget in date_frame.winfo_children():
+        if isinstance(widget, ctk.CTkCheckBox) and widget.cget("variable").get() != "off":
+            selected_dates.append(widget.cget("variable").get())
+
+def get_selected_dates():
+    """
+    Gibt die Liste der ausgewählten Daten zurück.
+    """
+    return selected_dates
+
+def convert_csv():
+    global input_file, selected_dates
     if not input_file:
         messagebox.showerror("Fehler", "Es wurde keine CSV-Datei geladen.")
         return
 
-    selected_date = date_dropdown.get().split(" ")[0]  # Nur das Datum extrahieren
-    
+    if not selected_dates:
+        messagebox.showerror("Fehler", "Es wurden keine Daten ausgewählt.")
+        return
+
     output_file = filedialog.asksaveasfilename(
         title="Speichern unter", defaultextension=".csv", filetypes=[("CSV-Dateien", "*.csv")]
     )
@@ -51,7 +91,7 @@ def convert_csv(date_dropdown):
 
                 has_data = False
                 for row in reader:
-                    if row.get("Sale Date", "") != selected_date:
+                    if row.get("Sale Date", "") not in selected_dates:
                         continue
                     
                     street, house_number = extract_street_and_number(row.get("Street 1", ""), row.get("Street 2", ""))
@@ -71,7 +111,7 @@ def convert_csv(date_dropdown):
                         "Absenderreferenz": "",
                         "Absender E-Mail-Adresse": "hello@verdruckt.com",
                         "Absender Telefonnummer": "",
-                        "Empfänger Name 1": row.get("Full Name", ""),
+                        "Empfänger Name 1": replace_invalid_characters(row.get("Full Name", "")),
                         "Empfänger Name 2 / Postnummer": "",
                         "Empfänger Name 3": "",
                         "Empfänger Straße": street,
@@ -87,7 +127,7 @@ def convert_csv(date_dropdown):
                     has_data = True
 
                 if not has_data:
-                    messagebox.showwarning("Keine Daten", "Es wurden keine Sendungsdaten für das ausgewählte Datum gefunden.")
+                    messagebox.showwarning("Keine Daten", "Es wurden keine Sendungsdaten für die ausgewählten Daten gefunden.")
                 else:
                     messagebox.showinfo("Erfolg", "Die CSV-Datei wurde erfolgreich erstellt!")
     except Exception as e:
