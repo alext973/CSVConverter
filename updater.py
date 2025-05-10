@@ -8,7 +8,7 @@ def check_for_updates():
     """
     repo_owner = "alext973"         # Replace with the GitHub username or organization
     repo_name = "CSVConverter"      # Replace with the repository name
-    current_version = "1.0.4"       # Replace with the current version of your program
+    current_version = "1.0.3"       # Replace with the current version of your program
 
     api_url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/releases/latest"
 

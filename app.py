@@ -27,7 +27,7 @@ def start_app():
     date_label.pack(pady=5)
 
     # Frame für die Checkboxen
-    date_frame = ctk.CTkFrame(frame)
+    date_frame = ctk.CTkScrollableFrame(frame, width=450, height=200)  # Setze Breite und Höhe
     date_frame.pack(pady=10, fill="both", expand=True)
 
     # Konvertieren Button
