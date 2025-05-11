@@ -1,0 +1,17 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# PyInstaller build
+build/
+dist/
+*.spec
+*.toc
+*.zip
+*.exe
+
+# VS Code (optional)
+.vscode/
+
+# Mac OS (optional)
+.DS_Store
