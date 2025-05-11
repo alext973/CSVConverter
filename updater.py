@@ -22,7 +22,7 @@ def check_for_updates():
         if latest_version != current_version:
             print(f"New version available: {latest_version}. Updating...")
             download_url = latest_release["assets"][0]["browser_download_url"]
-            exe_path = os.path.join(os.getcwd(), "main.exe")
+            exe_path = os.path.abspath(sys.argv[0])  # Pfad zur aktuellen main.exe
 
             # Download the new main.exe
             with requests.get(download_url, stream=True) as r:
