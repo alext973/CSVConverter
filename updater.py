@@ -2,14 +2,15 @@ import requests
 import os
 import sys
 import shutil
+import subprocess
 
 def check_for_updates():
     """
     Checks for updates on GitHub and installs the latest release if available.
     """
-    repo_owner = "alext973"         # Replace with the GitHub username or organization
-    repo_name = "CSVConverter"      # Replace with the repository name
-    current_version = "1.0.0"       # Replace with the current version of your program
+    repo_owner = "alext973"
+    repo_name = "CSVConverter"
+    current_version = "1.0.555"
 
     api_url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/releases/latest"
 
@@ -22,15 +23,19 @@ def check_for_updates():
         if latest_version != current_version:
             print(f"New version available: {latest_version}. Updating...")
             download_url = latest_release["assets"][0]["browser_download_url"]
-            exe_path = os.path.join(os.getcwd(), "main.exe")
+            exe_dir = os.getcwd()
+            exe_path_new = os.path.join(exe_dir, "main_new.exe")
 
-            # Download the new main.exe
+            # Download the new main.exe as main_new.exe
             with requests.get(download_url, stream=True) as r:
                 r.raise_for_status()
-                with open(exe_path, "wb") as f:
+                with open(exe_path_new, "wb") as f:
                     shutil.copyfileobj(r.raw, f)
 
-            print("Update installed successfully. Please restart the program.")
+            print("Update downloaded. Starting updater...")
+            # Start the updater script and exit
+            updater_script = os.path.join(exe_dir, "run_updater.bat")
+            subprocess.Popen([updater_script], shell=True)
             sys.exit(0)
         else:
             print("You are using the latest version.")
